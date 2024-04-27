@@ -1,234 +1,196 @@
 import axios from "axios";
 import { useFormik } from "formik";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGoogle, faApple, faFacebook } from '@fortawesome/free-brands-svg-icons';
+import styles from "./Register.module.css";
 
 export default function Register() {
-  const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  let navigate = useNavigate();
 
+  // async function callRegister(reqBody) {
+  //   setIsLoading(true);
+  //   try {
+  //     let { status } = await axios.post(`https://api-dev.rescounts.com/api/v1/users`, reqBody);
+  //     console.log(status);
+  //     if (status === 201) {
+  //       window.location.href = "/Login";
+  //     }
+  //   } catch (error) {
+  //     setIsLoading(false);
+  //     alert(error.response.data.message); // Display the error message in an alert
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // }
   async function callRegister(reqBody) {
-    setErrorMessage("");
     setIsLoading(true);
     try {
-      let { data } = await axios.post(`https://api-dev.rescounts.com/api/v1/users`, reqBody);
-      console.log(data);
-      if (data.success) {
-        navigate("/Login");
+      let { status } = await axios.post(`https://api-dev.rescounts.com/api/v1/users`, reqBody);
+      console.log(status);
+      if (status === 201) {
+        window.location.href = "/Login";
       }
-    } catch (err) {
+    } catch (error) {
       setIsLoading(false);
-      setErrorMessage(err.response.data.message);
+      let errorMessage = "An error occurred."; 
+      if (error.response && error.response.data && error.response.data.message) {
+        errorMessage = error.response.data.message;
+      }
+      alert(errorMessage); 
+    } finally {
+      setIsLoading(false);
     }
   }
+  
 
   const validationSchema = Yup.object({
+    email: Yup.string().email("Email not valid").required("Email is required"),
     firstName: Yup.string()
-      .min(2, "First name is too short")
-      .max(50, "First name is too long")
+      .min(3, "First name is too short")
+      .max(20, "First name is too long")
       .required("First name is required"),
     lastName: Yup.string()
-      .min(2, "Last name is too short")
-      .max(50, "Last name is too long")
+      .min(3, "Last name is too short")
+      .max(20, "Last name is too long")
       .required("Last name is required"),
-    email: Yup.string().email("Invalid email").required("Email is required"),
     password: Yup.string()
-      .min(8, "Password must be at least 8 characters")
-      .required("Password is required"),
+      .min(8, 'Password must be at least 8 characters')
+      .required('Password is required'),
     phoneNumber: Yup.string()
-      .matches(/^01[0-2]\d{8}$/, "Invalid phone number")
-      .required("Phone number is required"),
-    allowsPromotions: Yup.boolean().required(),
-    allowsSMS: Yup.boolean().required(),
-    notification: Yup.string().required("Notification token is required"),
+      .matches(/^01[0125][0-9]{8}$/, "Invalid mobile number")
+      .required("Mobile number is required"),
+    allowsPromotions: Yup.boolean(),
+    allowsSMS: Yup.boolean(),
   });
 
   const registerForm = useFormik({
     initialValues: {
+      email: "",
       firstName: "",
       lastName: "",
-      email: "",
       password: "",
       phoneNumber: "",
       allowsPromotions: true,
       allowsSMS: true,
-      notification: "",
+      notification:"",
     },
     validationSchema,
     onSubmit: callRegister,
   });
 
   return (
-    <>
-      <div className="w-75 mx-auto my-5">
-        <h2 className="mb-3">Register Now:</h2>
-        {errorMessage ? (
-          <div className="alert alert-danger">{errorMessage}</div>
-        ) : null}
-        <form onSubmit={registerForm.handleSubmit} className="row g-2">
-          <div className="col-md-6">
-            <label htmlFor="email" className="form-label">
-              Email:
-            </label>
+    <div className={styles.container}>
+      <div className={styles.registrationContainer}>
+        <h2 className={styles.createAccount}>Create Account</h2>
+        <div className={styles.socialIcons}>
+          <FontAwesomeIcon icon={faGoogle} className={styles.icon} />
+          <FontAwesomeIcon icon={faApple} className={styles.icon} />
+          <FontAwesomeIcon icon={faFacebook} className={styles.icon} />
+        </div>
+        <div className={styles.loginText}>
+          Already have an account? <a className={styles.linkk} href="/Login">Log in</a>
+        </div>
+        <form onSubmit={registerForm.handleSubmit} className={styles.registrationForm}>
+          <h6>Email</h6>
+          <div className={styles.inputRow}>
             <input
               type="email"
               name="email"
-              id="email"
               value={registerForm.values.email}
               onChange={registerForm.handleChange}
               onBlur={registerForm.handleBlur}
-              className="form-control"
+              className={styles.input}
+              placeholder="Email"
             />
-            {registerForm.errors.email && registerForm.touched.email ? (
-              <div className="alert alert-danger">
-                {registerForm.errors.email}
-              </div>
-            ) : null}
+            {registerForm.errors.email && registerForm.touched.email && <div className={styles.error}>{registerForm.errors.email}</div>}
           </div>
-          <div className="col-md-6">
-            <label htmlFor="firstName" className="form-label">
-              First Name:
-            </label>
-            <input
+          <h6>First Name</h6>
+          <div className={styles.inputRow}>
+            <input 
               type="text"
               name="firstName"
-              id="firstName"
               value={registerForm.values.firstName}
               onChange={registerForm.handleChange}
               onBlur={registerForm.handleBlur}
-              className="form-control"
+              className={styles.inputField}
+              placeholder="First Name"
             />
-            {registerForm.errors.firstName && registerForm.touched.firstName ? (
-              <div className="alert alert-danger">
-                {registerForm.errors.firstName}
-              </div>
-            ) : null}
-          </div>
-          <div className="col-md-6">
-            <label htmlFor="lastName" className="form-label">
-              Last Name:
-            </label>
-            <input
+            <input 
               type="text"
               name="lastName"
-              id="lastName"
               value={registerForm.values.lastName}
               onChange={registerForm.handleChange}
               onBlur={registerForm.handleBlur}
-              className="form-control"
+              className={styles.inputField}
+              placeholder="Last Name"
             />
-            {registerForm.errors.lastName && registerForm.touched.lastName ? (
-              <div className="alert alert-danger">
-                {registerForm.errors.lastName}
-              </div>
-            ) : null}
           </div>
-          <div className="col-md-6">
-            <label htmlFor="password" className="form-label">
-              Password:
-            </label>
+          <div className={styles.inputRow}>
+            <h6>Password</h6>
             <input
               type="password"
               name="password"
-              id="password"
               value={registerForm.values.password}
               onChange={registerForm.handleChange}
               onBlur={registerForm.handleBlur}
-              className="form-control"
+              className={styles.input}
+              placeholder="Password"
             />
-            {registerForm.errors.password && registerForm.touched.password ? (
-              <div className="alert alert-danger">
-                {registerForm.errors.password}
-              </div>
-            ) : null}
+            {registerForm.errors.password && registerForm.touched.password && <div className={styles.error}>{registerForm.errors.password}</div>}
           </div>
-          <div className="col-md-6">
-            <label htmlFor="phoneNumber" className="form-label">
-              Phone Number:
-            </label>
+          <div className={styles.inputRow}>
+            <h6>Notification</h6>
             <input
               type="text"
+              name="notification"
+              value={registerForm.values.notification}
+              onChange={registerForm.handleChange}
+              onBlur={registerForm.handleBlur}
+              className={styles.input}
+              placeholder="Notification"
+            />
+            {registerForm.errors.notification && registerForm.touched.notification && <div className={styles.error}>{registerForm.errors.notification}</div>}
+          </div>
+          <div className={styles.inputRow}>
+            <h6>Mobile Number</h6>
+            <input
+              type="tel"
               name="phoneNumber"
-              id="phoneNumber"
               value={registerForm.values.phoneNumber}
               onChange={registerForm.handleChange}
               onBlur={registerForm.handleBlur}
-              className="form-control"
+              className={styles.input}
+              placeholder="Mobile Number"
             />
-            {registerForm.errors.phoneNumber && registerForm.touched.phoneNumber ? (
-              <div className="alert alert-danger">
-                {registerForm.errors.phoneNumber}
-              </div>
-            ) : null}
+            {registerForm.errors.phoneNumber && registerForm.touched.phoneNumber && <div className={styles.error}>{registerForm.errors.phoneNumber}</div>}
           </div>
-          <div className="col-md-6">
-            <label htmlFor="allowsPromotions" className="form-check-label">
-              Allows Promotions:
-            </label>
+          <div className={styles.inputRow}>
+            <label htmlFor="allowsPromotions" className={styles.linkk}>Allow Promotions:</label>
             <input
               type="checkbox"
               name="allowsPromotions"
-              id="allowsPromotions"
               checked={registerForm.values.allowsPromotions}
               onChange={registerForm.handleChange}
-              onBlur={registerForm.handleBlur}
-              className="form-check-input"
+              className={styles.checkbox}
             />
           </div>
-          <div className="col-md-6">
-            <label htmlFor="allowsSMS" className="form-check-label">
-              Allows SMS:
-            </label>
+          <div className={styles.inputRow}>
+            <label htmlFor="allowsSMS" className={styles.linkk}>Allow SMS:</label>
             <input
               type="checkbox"
               name="allowsSMS"
-              id="allowsSMS"
               checked={registerForm.values.allowsSMS}
               onChange={registerForm.handleChange}
-              onBlur={registerForm.handleBlur}
-              className="form-check-input"
-              />
-            </div>
-            <div className="col-md-6">
-              <label htmlFor="notification" className="form-label">
-                Notification:
-              </label>
-              <input
-                type="text"
-                name="notification"
-                id="notification"
-                value={registerForm.values.notification}
-                onChange={registerForm.handleChange}
-                onBlur={registerForm.handleBlur}
-                className="form-control"
-              />
-              {registerForm.errors.notification && registerForm.touched.notification ? (
-                <div className="alert alert-danger">
-                  {registerForm.errors.notification}
-                </div>
-              ) : null}
-            </div>
-            <div className="col-12">
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={registerForm.isSubmitting}
-              >
-                {isLoading ? (
-                  <span
-                    className="spinner-border spinner-border-sm"
-                    role="status"
-                    aria-hidden="true"
-                  ></span>
-                ) : null}
-                Register
-              </button>
-            </div>
-          </form>
-        </div>
-      </>
-    );
-    }
-    
+              className={styles.checkbox}
+            />
+          </div>
+          <button type="submit" className={styles.submitButton} disabled={isLoading}>
+            {isLoading ? <span className={styles.spinner}></span> : "Sign Up"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}

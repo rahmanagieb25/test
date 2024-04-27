@@ -1,0 +1,103 @@
+.container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .loginContainer {
+    width: 50%;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .loginTitle {
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .loginForm {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .inputRow {
+    margin-bottom: 20px;
+  }
+  
+  .input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .error {
+    color: red;
+    margin-top: 5px;
+  }
+  
+  .submitButton {
+    width: 100%;
+    padding: 10px;
+    background-color: #f0ad4e;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .submitButton:hover {
+    background-color: #E9D023;
+  }
+  
+  .spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #333;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    margin-left: 10px;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .errorMessage {
+    color: red;
+    margin-top: 10px;
+  }
+  
+  .loginText {
+    margin-top: 20px;
+    color: #666;
+    font-size: 14px;
+  }
+  
+  .linkk {
+    color:#D80073;
+    text-decoration: none;
+  }
+  
+  .linkk:hover {
+    text-decoration: underline;
+  }
+  
+  .socialIcons {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+  }
+  
+  .icon {
+    font-size: 24px;
+    color: #333;
+    margin-right: 10px;
+  }
+  
